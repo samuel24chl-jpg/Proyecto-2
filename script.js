@@ -225,7 +225,18 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const guardarEventosStorage = () => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(eventsArr));
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(eventsArr));
+            return true;
+        } catch (e) {
+            console.error('Error al guardar en LocalStorage', e);
+            if (e.name === 'QuotaExceededError' || e.code === 22 || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                alert('¡Ups! El almacenamiento está lleno (las imágenes de alta resolución ocupan mucho espacio). Intenta eliminar algunos eventos o subir fotos más ligeras.');
+            } else {
+                alert('Ocurrió un error al intentar guardar el evento.');
+            }
+            return false;
+        }
     };
 
     /**
@@ -281,7 +292,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Guardar en Array y LocalStorage
         eventsArr.push(nuevoEvento);
-        guardarEventosStorage();
+        const guardadoExitoso = guardarEventosStorage();
+
+        if (!guardadoExitoso) {
+            // Si falla el guardado (ej. cuota excedida), revertimos y abortamos
+            eventsArr.pop();
+            return;
+        }
 
         // Renderizar dinámicamente con animaciones
         renderizarEventoVDOM(nuevoEvento);
