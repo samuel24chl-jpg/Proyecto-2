@@ -13,10 +13,10 @@
 
     <!-- Animales flotantes -->
     <div id="floating-animals-container">
-        <img src="assets/cat_cartoon.png" alt="Gato flotante" class="floating-animal float-cat">
-        <img src="assets/dog_cartoon.png" alt="Perro flotante" class="floating-animal float-dog">
-        <img src="assets/capybara_cartoon.png" alt="Capibara flotante" class="floating-animal float-capybara">
-        <img src="assets/bird_cartoon.png" alt="Pajarito flotante" class="floating-animal float-bird">
+        <img src="C:\Users\samue\Desktop\Proyecto-2\Proyecto-2\assets\descargar.webp" alt="Gato flotante" class="floating-animal float-cat">
+        <img src="C:\Users\samue\Desktop\Proyecto-2\Proyecto-2\assets\OIP (1).webp" alt="Perro flotante" class="floating-animal float-dog">
+        <img src="C:\Users\samue\Desktop\Proyecto-2\Proyecto-2\assets\descargar (1).webp" alt="Capibara flotante" class="floating-animal float-capybara">
+        <img src="C:\Users\samue\Desktop\Proyecto-2\Proyecto-2\assets\OIP.webp" alt="Pajarito flotante" class="floating-animal float-bird">
     </div>
 
     <main class="app-container">
@@ -25,7 +25,9 @@
             <p>Registra de manera segura los momentos más felices y divertidos con tu mascota.</p>
         </header>
 
-        <!-- Fase 1: Formulario interactivo con estructura semántica -->
+        <!-- Contenedor Flex/Grid de dos columnas -->
+        <div class="content-wrapper">
+            <!-- Fase 1: Formulario interactivo con estructura semántica -->
         <section class="form-section">
             <div class="form-header">
                 <!-- Imagen decorativa tipo caricatura/ilustración (SVG inline o URL de servicio) -->
@@ -40,6 +42,14 @@
                     <input type="text" id="petName" required placeholder=" ">
                     <label for="petName">Nombre de la Mascota</label>
                     <span class="error-msg" id="error-petName"></span>
+                </div>
+
+                <div class="file-upload-group">
+                    <input type="file" id="petImage" accept="image/*" class="file-input">
+                    <label for="petImage" class="file-label">
+                        <span class="upload-icon">📷</span>
+                        <span id="file-chosen">Subir foto de mascota (Opcional)</span>
+                    </label>
                 </div>
 
                 <div class="input-group">
@@ -71,10 +81,14 @@
             </form>
         </section>
 
-        <!-- Fase 1: Contenedor semántico para la línea de tiempo -->
-        <section id="timeline" class="timeline-section" aria-live="polite">
-            <!-- Las tarjetas de hitos se inyectarán aquí dinámicamente -->
-        </section>
+            <!-- Fase 1: Contenedor semántico para la línea de tiempo -->
+            <div class="timeline-wrapper">
+                <h2 class="timeline-title">Línea de tiempo de los sucesos</h2>
+                <section id="timeline" class="timeline-section" aria-live="polite">
+                    <!-- Las tarjetas de hitos se inyectarán aquí dinámicamente -->
+                </section>
+            </div>
+        </div>
     </main>
 
     <script src="script.js"></script>

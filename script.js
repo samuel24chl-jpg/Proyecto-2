@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputType = document.getElementById('eventType');
     const inputDesc = document.getElementById('eventDesc');
     const timelineContainer = document.getElementById('timeline');
+    
+    // Variables para File Upload
+    const inputImage = document.getElementById('petImage');
+    const fileChosen = document.getElementById('file-chosen');
+    let base64Image = null; // Almacenará la imagen en base64
 
     // Mapeo útil para validaciones
     const inputsConfig = [
@@ -23,6 +28,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---- 2. ESTRUCTURA DE DATOS Y PERSISTENCIA ----
     const STORAGE_KEY = 'petStoryEvents_Secure';
     let eventsArr = [];
+
+    // Escuchar cambios en el input file para convertir a base64
+    if(inputImage) {
+        inputImage.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                fileChosen.textContent = file.name;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    base64Image = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileChosen.textContent = 'Subir foto de mascota (Opcional)';
+                base64Image = null;
+            }
+        });
+    }
 
     /**
      * MÓDULO ANTI-XSS (Cybersecurity)
@@ -109,8 +133,13 @@ document.addEventListener('DOMContentLoaded', () => {
         article.id = `evento-${eventoData.id}`;
 
         const img = document.createElement('img');
-        img.className = 'card-img-placeholder';
-        img.src = obtenerImagenPlaceholder(eventoData.type);
+        if (eventoData.image) {
+            img.className = 'card-img-placeholder uploaded-img';
+            img.src = eventoData.image; // Base64 inyectado
+        } else {
+            img.className = 'card-img-placeholder';
+            img.src = obtenerImagenPlaceholder(eventoData.type);
+        }
         img.alt = `Icono de evento ${eventoData.type}`;
 
         const divContent = document.createElement('div');
@@ -246,7 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
             name: sanitizarTexto(inputName.value),
             date: sanitizarTexto(inputDate.value),
             type: sanitizarTexto(inputType.value),
-            desc: sanitizarTexto(inputDesc.value)
+            desc: sanitizarTexto(inputDesc.value),
+            image: base64Image
         };
 
         // Guardar en Array y LocalStorage
@@ -258,6 +288,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // UX: Restaurar estado inicial
         form.reset();
+        base64Image = null;
+        if(fileChosen) fileChosen.textContent = 'Subir foto de mascota (Opcional)';
+        
         inputsConfig.forEach(conf => {
             conf.el.classList.remove('valid-border', 'shake');
         });
