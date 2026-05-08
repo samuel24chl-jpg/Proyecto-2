@@ -4,3 +4,5 @@
 #Creacion de animaciones  puramente en CSS para efectos visuales
 #Utilizacion de iconos  para mejorar la experiencia del usuario
 #Implementanto sistema de seguridad anti intrucciones maliciosas    
+#reforzamiento de las validaciones de los formularios y medidas de seguriad
+#Cambio en rebordes de las imagenes flotantes
