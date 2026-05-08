@@ -29,16 +29,63 @@ document.addEventListener('DOMContentLoaded', () => {
     const STORAGE_KEY = 'petStoryEvents_Secure';
     let eventsArr = [];
 
-    // Escuchar cambios en el input file para convertir a base64
+    // Escuchar cambios en el input file para validar y redimensionar
     if(inputImage) {
         inputImage.addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 const file = this.files[0];
+                
+                // Validación de tipo (solo imágenes)
+                if (!file.type.startsWith('image/')) {
+                    alert('Por favor, sube solo archivos de imagen (JPG, PNG, WEBP).');
+                    this.value = '';
+                    fileChosen.textContent = 'Subir foto de mascota (Opcional)';
+                    base64Image = null;
+                    return;
+                }
+                
+                // Validación de tamaño (Max 5MB original)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('La imagen es demasiado grande. El límite es 5MB.');
+                    this.value = '';
+                    fileChosen.textContent = 'Subir foto de mascota (Opcional)';
+                    base64Image = null;
+                    return;
+                }
+
                 fileChosen.textContent = file.name;
                 
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    base64Image = e.target.result;
+                    const img = new Image();
+                    img.onload = function() {
+                        // Compresión con Canvas (Max ancho/alto 800px)
+                        const MAX_SIZE = 800;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_SIZE) {
+                                height *= MAX_SIZE / width;
+                                width = MAX_SIZE;
+                            }
+                        } else {
+                            if (height > MAX_SIZE) {
+                                width *= MAX_SIZE / height;
+                                height = MAX_SIZE;
+                            }
+                        }
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Guardar como webp para mayor compresión (calidad 80%)
+                        base64Image = canvas.toDataURL('image/webp', 0.8);
+                    };
+                    img.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
             } else {
@@ -48,24 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /**
-     * MÓDULO ANTI-XSS (Cybersecurity)
-     * Neutraliza caracteres especiales que podrían ser usados para inyectar código dañino.
-     * Esta función evita que ataques tipo XSS persistidos guarden scripts maliciosos.
-     * @param {string} text - Texto en crudo proveniente del input del usuario.
-     * @returns {string} Texto sanitizado.
-     */
-    const sanitizarTexto = (text) => {
-        if (!text) return '';
-        // Convierte el input a string de forma segura y reemplaza caracteres vitales
-        return String(text)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    };
-
+    // (Sanitización manual eliminada: Se utiliza textContent en el renderizado, lo cual previene XSS de forma nativa sin romper los caracteres especiales del usuario)
     /**
      * Devuelve una imagen decorativa (SVG en Data URI) según el tipo de evento
      * para asegurar que los assets sean locales y seguros.
@@ -280,13 +310,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Abortar si falta algo
         if (!isValid) return;
 
-        // Capturar, Sanitizar (Anti-XSS core) y Crear Objeto
+        // Capturar datos y Crear Objeto (Sin doble sanitización, textContent protegerá en la vista)
         const nuevoEvento = {
             id: Date.now(),
-            name: sanitizarTexto(inputName.value),
-            date: sanitizarTexto(inputDate.value),
-            type: sanitizarTexto(inputType.value),
-            desc: sanitizarTexto(inputDesc.value),
+            name: inputName.value.trim(),
+            date: inputDate.value.trim(),
+            type: inputType.value.trim(),
+            desc: inputDesc.value.trim(),
             image: base64Image
         };
 
