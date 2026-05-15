@@ -6,3 +6,6 @@
 #Implementanto sistema de seguridad anti intrucciones maliciosas    
 #reforzamiento de las validaciones de los formularios y medidas de seguriad
 #Cambio en rebordes de las imagenes flotantes
+#Optimización y corrección de código: Eliminación de código comentado, variables no utilizadas y errores de sintaxis para mejorar la legibilidad y el rendimiento.
+#Incorporación de imágenes de mascotas en alta calidad y optimizadas (WebP) para mantener la estética visual sin afectar el rendimiento.
+#Refactorización del código: Reestructuración del código para mejorar su organización y mantenibilidad, consolidando funcionalidades relacionadas y mejorando la claridad del código.   
